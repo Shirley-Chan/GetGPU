@@ -30,6 +30,7 @@ namespace ChooseGPU
             DedicatedVideoMemory = new MemorySize(double.Parse(element.Element("dedicatedvideomemory").Value));
             DedicatedSystemMemory = new MemorySize(double.Parse(element.Element("dedicatedsystemmemory").Value));
             SharedSystemMemory = new MemorySize(double.Parse(element.Element("sharedsystemmemory").Value));
+            MaxFeatureLevel = double.Parse(element.Element("maxfeaturelevel").Value);
         }
         public static List<GPUInformation> LoadAllGPUInfo(string GPUInfoFilePath)
         {
@@ -59,5 +60,9 @@ namespace ChooseGPU
         /// 共有システムメモリのサイズ
         /// </summary> 
         public MemorySize SharedSystemMemory;
+        /// <summary>
+        /// 対応している最大の機能レベル(DirectX 11の判定のファイルでは11.0が入る)
+        /// </summary> 
+        public double MaxFeatureLevel;
     }
 }
