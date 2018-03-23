@@ -1,4 +1,4 @@
-#ifndef __MSXMLWRITE_HPP__
+﻿#ifndef __MSXMLWRITE_HPP__
 #define __MSXMLWRITE_HPP__
 #include "ComPtr.hpp"
 #include <msxml.h>

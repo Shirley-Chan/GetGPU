@@ -161,7 +161,6 @@
   <ItemGroup>
     <ClInclude Include="ComPtr.hpp" />
     <ClInclude Include="MSXMLWrite.hpp" />
-    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />

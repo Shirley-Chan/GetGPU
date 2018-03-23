@@ -1,4 +1,4 @@
-#include "MSXMLWrite.hpp"
+﻿#include "MSXMLWrite.hpp"
 #include "Win32API.hpp"
 #include "KgWinException.hpp"
 #include <comdef.h>
