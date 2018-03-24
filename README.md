@@ -21,12 +21,27 @@ GetGPU.exe &lt;xmlを出力するパス&gt;
 ### Rundll32ExecuteDllType
 rundll32.exe GetGPUDll.dll,GetGPUInformation &lt;xmlを出力するパス&gt;
 
-## 使用しているライブラリとプログラムそのものについて
-GetGPU内のlibsフォルダ内にあるのは、[あいめぐ(メインペンネーム：神御田)さん](https://github.com/AinoMegumi)が独自に作成したWin32 APIのラッパーライブラリで、MIT Licenseということです。
+## サポートＯＳ
 
-ライブラリを使いたい人は、わりと癖があるようなので相談してからにしたほうがいいと思います。
+- Windows 7
+- Windows 8.1
+- Windows 10 Anniversary Update以降(Windows 10 SDKによるビルド)
 
-## お詫び
-現在Windows 10 Fall Creators UpdateのSDK以外のものを使ってビルドするとビルドエラーになる状態です。
+※Microsoftによってサポートが切れたＯＳについては、更新の遅延等でここに記述があったとしてもサポートを切っておりますので予めご了承下さい。
 
-早急な修正を行っておりますのでお待ちください。
+## ライセンスについて
+
+ソースコードによってライセンスが異なります。
+
+### Main.cpp内のコード及びChooseGPUプロジェクトのソースコード
+このソースコードは、(GNU General Public License(GPL))ライセンスとなっています。
+
+### MSXMLWriteクラスのソースコード(MSXMLWrite.cpp、MSXMLWrite.hpp)
+現在このソースコードは別途公開準備中ですが、MITライセンスとなっています。
+
+### GetGPUフォルダ内のlibsフォルダ内部のライブラリのライセンス
+このライブラリについては、[あいめぐ(メインペンネーム：神御田)さん](https://github.com/AinoMegumi)が独自に作成したWin32 APIのラッパーライブラリで、厚意で提供してくださったものです。
+
+また、このプロジェクトそのものが元々あいめぐさんが発端で始まったプロジェクトで、結構実装が面倒な部分は彼が一時的にライブラリを提供してくれただけのものなので使用したい場合はあいめぐさんに相談してください。
+
+また、彼によって同じ実装を備えた一般公開用ライブラリの提供がされ次第そっちに置き換えます。
