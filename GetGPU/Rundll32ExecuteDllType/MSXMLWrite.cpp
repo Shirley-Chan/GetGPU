@@ -113,20 +113,20 @@ IXMLDOMText* MSXMLWrite::CreateTextNodeNormalPtr(const wchar_t* Data) {
 	return lpText;
 }
 
-Microsoft::WRL::ComPtr<IXMLDOMText> MSXMLWrite::CreateTextNodeComPtr(const wchar_t* Data) {
-	return Microsoft::WRL::ComPtr<IXMLDOMText>(this->CreateTextNodeNormalPtr(Data));
+ComPtr<IXMLDOMText> MSXMLWrite::CreateTextNodeComPtr(const wchar_t* Data) {
+	return ComPtr<IXMLDOMText>(this->CreateTextNodeNormalPtr(Data));
 }
 
 ComPtr<IXMLDOMElement> MSXMLWrite::CreateElementIncludedTextData(const std::string Tag, const std::string Text) {
 	ComPtr<IXMLDOMElement> lpElem = this->CreateElement(Tag);
-	const Microsoft::WRL::ComPtr<IXMLDOMText> Txt = this->CreateTextNodeComPtr(StringToWString(Text).c_str());
+	const ComPtr<IXMLDOMText> Txt = this->CreateTextNodeComPtr(StringToWString(Text).c_str());
 	lpElem->appendChild(Txt.Get(), NULL);
 	return lpElem;
 }
 
 ComPtr<IXMLDOMElement> MSXMLWrite::CreateElementIncludedTextData(const std::wstring Tag, const std::wstring Text) {
 	ComPtr<IXMLDOMElement> lpElem = this->CreateElement(Tag);
-	const Microsoft::WRL::ComPtr<IXMLDOMText> Txt = this->CreateTextNodeComPtr(Text.c_str());
+	const ComPtr<IXMLDOMText> Txt = this->CreateTextNodeComPtr(Text.c_str());
 	lpElem->appendChild(Txt.Get(), NULL);
 	return lpElem;
 }

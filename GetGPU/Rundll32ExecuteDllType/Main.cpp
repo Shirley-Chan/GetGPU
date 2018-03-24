@@ -53,10 +53,10 @@ public:
 #if (_WIN32_WINNT >= 0x0A00)
 std::vector<GPUInformation> GetGPUList() {
 	std::vector<GPUInformation> DeviceList;
-	Microsoft::WRL::ComPtr<IDXGIFactory4> Factory;
+	ComPtr<IDXGIFactory4> Factory;
 	if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(&Factory)))) throw std::runtime_error("Failed to create factory.");
 	static const std::array<D3D_FEATURE_LEVEL, 4> Buffer = { D3D_FEATURE_LEVEL_12_1, D3D_FEATURE_LEVEL_12_0, D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0 };
-	Microsoft::WRL::ComPtr<IDXGIAdapter1> HardwareAdapter;
+	ComPtr<IDXGIAdapter1> HardwareAdapter;
 	for (unsigned int i = 0; DXGI_ERROR_NOT_FOUND != Factory->EnumAdapters1(i, &HardwareAdapter); i++) {
 		DXGI_ADAPTER_DESC1 desc{};
 		HardwareAdapter->GetDesc1(&desc);
