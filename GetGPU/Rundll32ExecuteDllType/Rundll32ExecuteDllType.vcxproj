@@ -98,7 +98,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\libs\$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\$(WindowsTargetPlatformVersion)\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>GetGPU.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -114,7 +114,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\libs\$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\$(WindowsTargetPlatformVersion)\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>GetGPU.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -134,7 +134,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\libs\$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\$(WindowsTargetPlatformVersion)\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>GetGPU.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -154,7 +154,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)\libs\$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)libs\$(WindowsTargetPlatformVersion)\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>GetGPU.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>

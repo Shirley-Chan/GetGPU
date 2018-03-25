@@ -1,9 +1,18 @@
 ﻿#include "MSXMLWrite.hpp"
-#include "ApplicationDirectory.hpp"
-#include "Win32API.hpp"
-#include "KgWinException.hpp"
+#include "ApplicationCurrentDirectoryManager.hpp"
+#include "Win32LetterConvert.hpp"
+#include "Win32Exception.hpp"
 #include <vector>
 #include <array>
+#ifdef _DEBUG
+#pragma comment(lib, "Win32LetterConvertDebug.lib")
+#pragma comment(lib, "Win32ExceptionDebug.lib")
+#pragma comment(lib, "ApplicationCurrentDirectoryManagerDebug.lib")
+#else
+#pragma comment(lib, "Win32LetterConvertRelease.lib")
+#pragma comment(lib, "Win32ExceptionRelease.lib")
+#pragma comment(lib, "ApplicationCurrentDirectoryManagerRelease.lib")
+#endif
 #if (_WIN32_WINNT >= 0x0A00)
 #include <d3d12.h>
 #include <dxgi1_4.h>
@@ -12,7 +21,6 @@
 #else
 #include <d3d11.h>
 #pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dxgi.lib")
 #endif
 
 #define SAFERELEASE(p) { if(p) { (p)->Release(); (p) = NULL; } }
@@ -102,7 +110,7 @@ std::vector<GPUInformation> GetGPUList() {
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 	try {
-		const ApplicationDirectoryW AppPath = ApplicationDirectoryW::Initialize(true);
+		const ApplicationCurrentDirectoryManagerW AppPath = ApplicationCurrentDirectoryManagerW::Initialize();
 		const std::wstring FileSavePoint = AppPath.ChangeFullPath(std::strlen(lpCmdLine) == 0 ? L".\\gpu.xml" : StringToWString(lpCmdLine) + L"\\gpu.xml");
 		const std::vector<GPUInformation> GPUList = GetGPUList();
 		MSXMLWrite xml(FileSavePoint, L"gpulist");
@@ -121,7 +129,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 	catch (const std::exception& er) {
 		return MessageBoxA(NULL, er.what(), "エラー", MB_ICONERROR | MB_OK);
 	}
-	catch (const KgWinException& kex) {
-		return kex.GraphErrorMessageOnMessageBox("エラー", MB_OK);
+	catch (const Win32Exception& kex) {
+		return kex.GraphOnMessageBox(NULL, ("エラー"), MB_OK);
 	}
 }

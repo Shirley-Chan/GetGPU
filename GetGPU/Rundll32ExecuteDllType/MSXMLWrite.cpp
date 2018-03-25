@@ -1,16 +1,23 @@
 ﻿#include "MSXMLWrite.hpp"
-#include "Win32API.hpp"
-#include "KgWinException.hpp"
+#include "Win32LetterConvert.hpp"
+#include "Win32Exception.hpp"
 #include <comdef.h>
 #ifdef CONSOLEWRITE
 #include <iostream>
+#endif
+#ifdef _DEBUG
+#pragma comment(lib, "Win32LetterConvertDebug.lib")
+#pragma comment(lib, "Win32ExceptionDebug.lib")
+#else
+#pragma comment(lib, "Win32LetterConvertRelease.lib")
+#pragma comment(lib, "Win32ExceptionRelease.lib")
 #endif
 #define SAFERELEASE(p) { if (p) p->Release(); p = NULL;}
 #define _B(str) SysAllocString(str)
 #define _BFREE(str) SysFreeString(str)
 
 static inline void ThrowExceptionIfErrorOccured(const HRESULT hr) {
-	if (FAILED(hr)) throw KgWinException(hr);
+	if (FAILED(hr)) throw Win32Exception(hr);
 }
 
 MSXMLWrite::MSXMLWrite(const std::string FilePath, const std::string Root, const bool BeginOnANewLinePerAddNewTag)
@@ -26,7 +33,7 @@ MSXMLWrite::MSXMLWrite(const std::wstring FilePath, const std::wstring Root, con
 #endif
 	CoInitialize(nullptr);
 	const HRESULT ErrorCode = CoCreateInstance(CLSID_DOMDocument, nullptr, CLSCTX_INPROC_SERVER, IID_IXMLDOMDocument, (void**)&this->lpXmlDoc);
-	if (this->lpXmlDoc == nullptr) throw KgWinException(ErrorCode);
+	if (this->lpXmlDoc == nullptr) throw Win32Exception(ErrorCode);
 	IXMLDOMProcessingInstruction* lpProcInst;
 	BSTR Target = _B(L"xml");
 	BSTR Xml = _B(L"version='1.0' encoding='UTF-8'");
@@ -58,16 +65,14 @@ MSXMLWrite::~MSXMLWrite() {
 			MessageBoxA(NULL, er.what(), "Error", MB_ICONERROR | MB_OK);
 #endif
 		}
-		catch (const KgWinException& kex) {
+		catch (const Win32Exception& kex) {
 #ifdef CONSOLEWRITE
-			kex.GraphErrorMessageOnConsole();
+			kex.GraphOnConsole();
 #else
-			kex.GraphErrorMessageOnMessageBox("Error", MB_OK);
+			kex.GraphOnMessageBox(NULL, TEXT("Error"), MB_OK);
 #endif
 		}
 	}
-	SAFERELEASE(this->lpRoot);
-	SAFERELEASE(this->lpXmlDoc);
 	CoUninitialize();	
 }
 
