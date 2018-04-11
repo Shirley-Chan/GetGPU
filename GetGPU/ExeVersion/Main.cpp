@@ -18,7 +18,7 @@
 #include <dxgi1_4.h>
 #pragma comment(lib, "d3d12.lib")
 #else
-#include <d3dx11.h>
+#include <d3d11.h>
 #pragma comment(lib, "d3d11.lib")
 #endif
 #pragma comment(lib, "dxgi.lib")
@@ -105,6 +105,8 @@ std::vector<GPUInformation> GetGPUList() {
 			DeviceList.emplace_back(desc, i);
 		}
 	}
+	SAFERELEASE(Dx11DevContext);
+	SAFERELEASE(Dx11Device);
 	SAFERELEASE(HardwareAdapter);
 	SAFERELEASE(Factory);
 	if (DeviceList.empty()) throw std::runtime_error(
