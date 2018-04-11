@@ -17,11 +17,11 @@
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "dxgi.lib")
 #else
 #include <d3d11.h>
 #pragma comment(lib, "d3d11.lib")
 #endif
+#pragma comment(lib, "dxgi.lib")
 
 #define SAFERELEASE(p) { if(p) { (p)->Release(); (p) = NULL; } }
 
@@ -95,13 +95,13 @@ std::vector<GPUInformation> GetGPUList() {
 		if (SUCCEEDED(D3D11CreateDevice(HardwareAdapter, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &Level, 0, D3D11_SDK_VERSION, nullptr, nullptr, nullptr))) {
 			DXGI_ADAPTER_DESC desc;
 			HardwareAdapter->GetDesc(&desc);
-			DeviceList.emplace_back(desc, i, Level);
+			DeviceList.emplace_back(desc, i);
 		}
 	}
 	SAFERELEASE(HardwareAdapter);
 	SAFERELEASE(Factory);
 	if (DeviceList.empty()) throw std::runtime_error(
-		"This computer is installed no hardware device compatibled DirectX 11 use hardware adapter."
+		"This computer is installed no hardware device compatibled DirectX 11 use hardware adapter.\n"
 		"Warning : This tool can not judge compatibled warp device mode."
 	);
 	return DeviceList;

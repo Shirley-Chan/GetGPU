@@ -17,11 +17,11 @@
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "dxgi.lib")
 #else
-#include <d3d11.h>
+#include <d3dx11.h>
 #pragma comment(lib, "d3d11.lib")
 #endif
+#pragma comment(lib, "dxgi.lib")
 
 #define SAFERELEASE(p) { if(p) { (p)->Release(); (p) = NULL; } }
 
@@ -90,9 +90,16 @@ std::vector<GPUInformation> GetGPUList() {
 	if (FAILED(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&Factory)))
 		throw std::runtime_error("failed to create dxgi factory.");
 	IDXGIAdapter* HardwareAdapter;
+	ID3D11Device* Dx11Device;
+	ID3D11DeviceContext* Dx11DevContext;
+	unsigned int CreationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#ifdef _DEBUG
+	CreationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
 	for (unsigned int i = 0; DXGI_ERROR_NOT_FOUND != Factory->EnumAdapters(i, &HardwareAdapter); i++) {
-		const D3D_FEATURE_LEVEL Level = D3D_FEATURE_LEVEL_11_0;
-		if (SUCCEEDED(D3D11CreateDevice(HardwareAdapter, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &Level, 0, D3D11_SDK_VERSION, nullptr, nullptr, nullptr))) {
+		const D3D_FEATURE_LEVEL Level[] = { D3D_FEATURE_LEVEL_11_0 };
+		const HRESULT hr = D3D11CreateDevice(HardwareAdapter, D3D_DRIVER_TYPE_HARDWARE, NULL, CreationFlags, Level, ARRAYSIZE(Level), D3D11_SDK_VERSION, &Dx11Device, nullptr, &Dx11DevContext);
+		if (SUCCEEDED(hr)) {
 			DXGI_ADAPTER_DESC desc;
 			HardwareAdapter->GetDesc(&desc);
 			DeviceList.emplace_back(desc, i);
