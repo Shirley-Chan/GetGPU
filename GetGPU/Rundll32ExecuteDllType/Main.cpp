@@ -86,18 +86,28 @@ std::vector<GPUInformation> GetGPUList() {
 #else
 std::vector<GPUInformation> GetGPUList() {
 	std::vector<GPUInformation> DeviceList;
-	IDXGIFactory* Factory;
+	IDXGIFactory* Factory = NULL;
 	if (FAILED(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&Factory)))
 		throw std::runtime_error("failed to create dxgi factory.");
-	IDXGIAdapter* HardwareAdapter;
+	IDXGIAdapter* HardwareAdapter = NULL;
+	ID3D11Device* Dx11Device = NULL;
+	ID3D11DeviceContext* Dx11DevContext = NULL;
+	unsigned int CreationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#ifdef _DEBUG
+	CreationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
 	for (unsigned int i = 0; DXGI_ERROR_NOT_FOUND != Factory->EnumAdapters(i, &HardwareAdapter); i++) {
-		const D3D_FEATURE_LEVEL Level = D3D_FEATURE_LEVEL_11_0;
-		if (SUCCEEDED(D3D11CreateDevice(HardwareAdapter, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &Level, 0, D3D11_SDK_VERSION, nullptr, nullptr, nullptr))) {
+		const D3D_FEATURE_LEVEL Level[] = { D3D_FEATURE_LEVEL_11_0 };
+		if (SUCCEEDED(
+			D3D11CreateDevice(HardwareAdapter, HardwareAdapter != NULL ? D3D_DRIVER_TYPE_UNKNOWN : D3D_DRIVER_TYPE_HARDWARE, NULL, CreationFlags, Level, ARRAYSIZE(Level), D3D11_SDK_VERSION, &Dx11Device, nullptr, &Dx11DevContext)
+		)) {
 			DXGI_ADAPTER_DESC desc;
 			HardwareAdapter->GetDesc(&desc);
 			DeviceList.emplace_back(desc, i);
 		}
 	}
+	SAFERELEASE(Dx11DevContext);
+	SAFERELEASE(Dx11Device);
 	SAFERELEASE(HardwareAdapter);
 	SAFERELEASE(Factory);
 	if (DeviceList.empty()) throw std::runtime_error(
@@ -128,7 +138,7 @@ void CALLBACK GetGPUInformation(HWND, HINSTANCE, LPSTR lpCmdLine, int) {
 	catch (const std::exception& er) {
 		MessageBoxA(NULL, er.what(), "エラー", MB_ICONERROR | MB_OK);
 	}
-	catch (const Win32Exception& kex) {
-		kex.GraphOnMessageBox(NULL, TEXT("エラー"), MB_OK);
+	catch (const Win32Exception& wex) {
+		wex.GraphOnMessageBox(NULL, TEXT("エラー"), MB_OK);
 	}
 }

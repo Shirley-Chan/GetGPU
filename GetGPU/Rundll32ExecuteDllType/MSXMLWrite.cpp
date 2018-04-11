@@ -43,13 +43,15 @@ MSXMLWrite::MSXMLWrite(const std::wstring FilePath, const std::wstring Root, con
 	_BFREE(Xml);
 	SAFERELEASE(lpProcInst);
 	this->lpRoot = this->CreateElementNormalPtr(Root.c_str());
+	this->CreateTextNodeComPtr(L"\n", this->NewLine);
+	this->CreateTextNodeComPtr(L"\t", this->Indent);
 	this->InitializeSucceeded = true;
 }
 
 MSXMLWrite::~MSXMLWrite() {
 	if (this->InitializeSucceeded) {
 		try {
-			this->lpRoot->appendChild(this->CreateTextNodeComPtr(L"\n").Get(), NULL);
+			this->lpRoot->appendChild(this->NewLine.Get(), NULL);
 			ThrowExceptionIfErrorOccured(this->lpXmlDoc->appendChild(this->lpRoot, NULL));
 			ThrowExceptionIfErrorOccured(this->lpXmlDoc->put_async(VARIANT_FALSE));
 #ifdef DLLIMPORT
@@ -65,11 +67,11 @@ MSXMLWrite::~MSXMLWrite() {
 			MessageBoxA(NULL, er.what(), "Error", MB_ICONERROR | MB_OK);
 #endif
 		}
-		catch (const Win32Exception& kex) {
+		catch (const Win32Exception& wex) {
 #ifdef CONSOLEWRITE
-			kex.GraphOnConsole();
+			wex.GraphOnConsole();
 #else
-			kex.GraphOnMessageBox(NULL, TEXT("Error"), MB_OK);
+			wex.GraphOnMessageBox(NULL, TEXT("Error"), MB_OK);
 #endif
 		}
 	}
@@ -85,16 +87,20 @@ ComPtr<IXMLDOMElement> MSXMLWrite::CreateElement(const std::wstring Tag) {
 }
 
 void MSXMLWrite::AddChildElementToParentElement(ComPtr<IXMLDOMElement> &Parent, const ComPtr<IXMLDOMElement> Child, const int ChildIndentNum) {
-	Parent->appendChild(this->CreateTextNodeComPtr(L"\n").Get(), NULL);
-	for (int i = 0; i < ChildIndentNum; i++) Parent->appendChild(this->CreateTextNodeComPtr(L"\t").Get(), NULL);
+	Parent->appendChild(this->NewLine.Get(), NULL);
+	for (int i = 0; i < ChildIndentNum; i++) Parent->appendChild(this->Indent.Get(), NULL);
 	Parent->appendChild(Child.Get(), NULL);
 }
 
 void MSXMLWrite::AddChildElementToRoot(ComPtr<IXMLDOMElement> Child, const int ChildTagIndentNum) {
-	Child->appendChild(this->CreateTextNodeComPtr(L"\n").Get(), NULL);
-	for (int i = 0; i < ChildTagIndentNum; i++) Child->appendChild(this->CreateTextNodeComPtr(L"\t").Get(), NULL);
-	this->lpRoot->appendChild(this->CreateTextNodeComPtr(L"\n").Get(), NULL);
-	for (int i = 0; i < ChildTagIndentNum; i++) this->lpRoot->appendChild(this->CreateTextNodeComPtr(L"\t").Get(), NULL);
+	this->CreateTextNodeComPtr(L"\n", this->NewLine);
+	this->CreateTextNodeComPtr(L"\t", Indent);
+	Child->appendChild(this->NewLine.Get(), NULL);
+	for (int i = 0; i < ChildTagIndentNum; i++) {
+		Child->appendChild(this->NewLine.Get(), NULL);
+	}
+	this->lpRoot->appendChild(this->NewLine.Get(), NULL);
+	for (int i = 0; i < ChildTagIndentNum; i++) this->lpRoot->appendChild(Indent.Get(), NULL);
 	this->lpRoot->appendChild(Child.Get(), NULL);
 }
 
@@ -118,20 +124,22 @@ IXMLDOMText* MSXMLWrite::CreateTextNodeNormalPtr(const wchar_t* Data) {
 	return lpText;
 }
 
-ComPtr<IXMLDOMText> MSXMLWrite::CreateTextNodeComPtr(const wchar_t* Data) {
-	return ComPtr<IXMLDOMText>(this->CreateTextNodeNormalPtr(Data));
+void MSXMLWrite::CreateTextNodeComPtr(const wchar_t* Data, ComPtr<IXMLDOMText> &Text) {
+	Text.Attach(this->CreateTextNodeNormalPtr(Data));
 }
 
 ComPtr<IXMLDOMElement> MSXMLWrite::CreateElementIncludedTextData(const std::string Tag, const std::string Text) {
 	ComPtr<IXMLDOMElement> lpElem = this->CreateElement(Tag);
-	const ComPtr<IXMLDOMText> Txt = this->CreateTextNodeComPtr(StringToWString(Text).c_str());
+	ComPtr<IXMLDOMText> Txt{};
+	this->CreateTextNodeComPtr(StringToWString(Text).c_str(), Txt);
 	lpElem->appendChild(Txt.Get(), NULL);
 	return lpElem;
 }
 
 ComPtr<IXMLDOMElement> MSXMLWrite::CreateElementIncludedTextData(const std::wstring Tag, const std::wstring Text) {
 	ComPtr<IXMLDOMElement> lpElem = this->CreateElement(Tag);
-	const ComPtr<IXMLDOMText> Txt = this->CreateTextNodeComPtr(Text.c_str());
+	ComPtr<IXMLDOMText> Txt{};
+	this->CreateTextNodeComPtr(Text.c_str(), Txt);
 	lpElem->appendChild(Txt.Get(), NULL);
 	return lpElem;
 }

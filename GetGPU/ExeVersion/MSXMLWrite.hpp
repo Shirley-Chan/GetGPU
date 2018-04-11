@@ -17,12 +17,13 @@ private:
 #endif
 	IXMLDOMDocument* lpXmlDoc;
 	IXMLDOMElement* lpRoot;
+	ComPtr<IXMLDOMText> NewLine, Indent;
 	bool InitializeSucceeded;
 	bool BeginOnANewLinePerAddNewTag;
 	IXMLDOMElement* CreateElementNormalPtr(const wchar_t* Tag);
 	ComPtr<IXMLDOMElement> CreateElementComPtr(const wchar_t* Tag);
 	IXMLDOMText* CreateTextNodeNormalPtr(const wchar_t* Data);
-	ComPtr<IXMLDOMText> CreateTextNodeComPtr(const wchar_t* Data);
+	void CreateTextNodeComPtr(const wchar_t* Data, ComPtr<IXMLDOMText> &Text);
 public:
 	MSXMLWrite() = delete;
 	MSXMLWrite(const MSXMLWrite&) = delete;
