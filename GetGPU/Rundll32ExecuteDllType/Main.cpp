@@ -1,8 +1,8 @@
-﻿#include "MSXMLWrite.hpp"
+﻿#include "GetGPUList.hpp"
+#include "MSXMLWrite.hpp"
 #include "ApplicationCurrentDirectoryManager.hpp"
 #include "Win32LetterConvert.hpp"
 #include "Win32Exception.hpp"
-#include <vector>
 #include <array>
 #ifdef _DEBUG
 #pragma comment(lib, "Win32LetterConvertDebug.lib")
@@ -14,8 +14,6 @@
 #pragma comment(lib, "ApplicationCurrentDirectoryManagerRelease.lib")
 #endif
 #if (_WIN32_WINNT >= 0x0A00)
-#include <d3d12.h>
-#include <dxgi1_4.h>
 #pragma comment(lib, "d3d12.lib")
 #else
 #include <d3d11.h>
@@ -24,40 +22,6 @@
 #pragma comment(lib, "dxgi.lib")
 
 #define SAFERELEASE(p) { if(p) { (p)->Release(); (p) = NULL; } }
-
-class GPUInformation {
-private:
-#if (_WIN32_WINNT >= 0x0A00)
-	double ToDouble(const D3D_FEATURE_LEVEL FeatureLevel) {
-		switch (FeatureLevel) {
-		case D3D_FEATURE_LEVEL_12_1: return 12.1;
-		case D3D_FEATURE_LEVEL_12_0: return 12.0;
-		case D3D_FEATURE_LEVEL_11_1: return 11.1;
-		case D3D_FEATURE_LEVEL_11_0: return 11.0;
-		default: throw std::runtime_error("Feature level is wrong.");
-		}
-	}
-#endif
-public:
-	GPUInformation() = default;
-#if (_WIN32_WINNT >= 0x0A00)
-	GPUInformation(const DXGI_ADAPTER_DESC1 desc, const unsigned int HardwareID, const D3D_FEATURE_LEVEL FeatureLevel)
-		: Description(desc.Description), DedicatedVideoMemory(desc.DedicatedVideoMemory),
-		DedicatedSystemMemory(desc.DedicatedSystemMemory), SharedSystemMemory(desc.SharedSystemMemory),
-		HardwareID(HardwareID), MaxFeatureLevel(ToDouble(FeatureLevel)) {}
-#else
-	GPUInformation(const DXGI_ADAPTER_DESC desc, const unsigned int HardwareID)
-		: Description(desc.Description), DedicatedVideoMemory(desc.DedicatedVideoMemory),
-		DedicatedSystemMemory(desc.DedicatedSystemMemory), SharedSystemMemory(desc.SharedSystemMemory),
-		HardwareID(HardwareID), MaxFeatureLevel(11.0) {}
-#endif
-	std::wstring Description;
-	size_t DedicatedVideoMemory;
-	size_t DedicatedSystemMemory;
-	size_t SharedSystemMemory;
-	unsigned int HardwareID;
-	double MaxFeatureLevel;
-};
 
 #if (_WIN32_WINNT >= 0x0A00)
 std::vector<GPUInformation> GetGPUList() {
